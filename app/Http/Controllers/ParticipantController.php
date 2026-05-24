@@ -44,18 +44,21 @@ class ParticipantController extends Controller
             $query->filterYearLevel($yearLevel);
         }
 
-        $participants = $query->paginate(15)->withQueryString();
+        $participants = $query->orderBy('full_name', 'asc')->paginate(15)->withQueryString();
 
         // Get unique courses and year levels for filter dropdowns directly from this event's pool
+        // Optimized: cache these queries if there are many participants
         $courses = $event->participants()
             ->distinct()
             ->pluck('course')
-            ->sort();
+            ->sort()
+            ->values();
 
         $yearLevels = $event->participants()
             ->distinct()
             ->pluck('year_level')
-            ->sort();
+            ->sort()
+            ->values();
 
         return view('participants.index', [
             'event' => $event,
@@ -73,7 +76,7 @@ class ParticipantController extends Controller
      */
     public function create(Event $event): View
     {
-        $this->authorize('update', $event);
+        $this->authorize('create', $event);
 
         return view('participants.create', compact('event'));
     }
@@ -83,7 +86,7 @@ class ParticipantController extends Controller
      */
     public function store(ParticipantFormRequest $request, Event $event): RedirectResponse
     {
-        $this->authorize('update', $event);
+        $this->authorize('create', $event);
 
         // Natively creating through relationship automatically sets the event_id foreign key
         $event->participants()->create([
@@ -139,9 +142,6 @@ class ParticipantController extends Controller
     /**
      * Delete a participant
      */
-/**
-     * Delete a participant
-     */
     public function destroy(Event $event, Participant $participant): RedirectResponse
     {
         $this->authorize('update', $event);
@@ -150,10 +150,9 @@ class ParticipantController extends Controller
             abort(404);
         }
 
-        /** @var \App\Models\Participant $participant */
         $participant->delete();
 
         return redirect()->route('participants.index', $event)
             ->with('success', 'Participant deleted successfully!');
     }
-}   
+}

@@ -54,7 +54,7 @@
                             <label class="form-label" for="event_date">Date & Time *</label>
                             <input type="datetime-local" class="form-control @error('event_date') is-invalid @enderror"
                                 id="event_date" name="event_date" value="{{ old('event_date') }}" required>
-                            <small class="text-muted">Format: YYYY-MM-DD HH:MM (must be in the future)</small>
+                            <small class="text-muted">Select a date and time in the future using the date picker</small>
                             @error('event_date')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Participant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 // REMOVED: use Illuminate\Contracts\Auth\Authenticatable;
@@ -52,6 +53,10 @@ class Admin extends Authenticatable
      */
     public function getTotalParticipantsAttribute(): int
     {
-        return Participant::whereIn('event_id', $this->events()->pluck('event_id'))->count();
+        // Optimized query to avoid N+1 problem
+        return Participant::whereIn(
+            'event_id', 
+            $this->events()->select('event_id')
+        )->count();
     }
 }

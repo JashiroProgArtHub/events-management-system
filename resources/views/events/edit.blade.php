@@ -58,7 +58,7 @@
                             <input type="datetime-local" class="form-control @error('event_date') is-invalid @enderror"
                                 id="event_date" name="event_date"
                                 value="{{ old('event_date', $event->event_date->format('Y-m-d\TH:i')) }}" required>
-                            <small class="text-muted">Format: YYYY-MM-DD HH:MM</small>
+                            <small class="text-muted">Use the date/time picker to select the event date and time</small>
                             @error('event_date')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror

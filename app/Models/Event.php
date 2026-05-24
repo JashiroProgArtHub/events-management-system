@@ -81,8 +81,9 @@ class Event extends Model
      */
     public function isDone(): bool
     {
-        // Change to look for yesterday or earlier to match the updated database logic
-        return $this->event_date->isPast() && !$this->event_date->isToday();
+        // Event is done if date is past OR if date is today but time has passed
+        return $this->event_date->isPast() || 
+               ($this->event_date->isToday() && now()->greaterThan($this->event_date));
     }
 
     /**

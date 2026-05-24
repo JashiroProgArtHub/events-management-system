@@ -25,8 +25,10 @@ class EventController extends Controller
         $search = $request->query('search', '');
         $status = $request->query('status', '');
 
-        // Start querying directly from the relationship
-        $query = $admin->events()->with('participants');
+        // Start querying directly from the relationship with eager loading
+        $query = $admin->events()->with(['participants' => function ($query) {
+            $query->select('participant_id', 'event_id', 'full_name');
+        }]);
 
         // Search by title
         if (!empty($search)) {
@@ -34,7 +36,7 @@ class EventController extends Controller
         }
 
         // Filter by status
-        if (!empty($status)) {
+        if (!empty($status) && in_array($status, ['upcoming', 'ongoing', 'done'])) {
             $query->filterStatus($status);
         }
 

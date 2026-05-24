@@ -30,10 +30,13 @@ class DashboardController extends Controller
         $ongoingEvents = $admin->events()->ongoing()->count();
         $completedEvents = $admin->events()->completed()->count();
 
-        // Get the 10 most recent events scoped to this admin
+        // Get the 10 most recent events scoped to this admin with eager loaded relationships
+        // Optimized with eager loading to prevent N+1 queries
         $recentEvents = $admin->events()
-            ->with('participants')
-            ->latest() // Shortcut alias for orderBy('created_at', 'desc')
+            ->with(['participants' => function ($query) {
+                $query->select('participant_id', 'event_id', 'full_name', 'course');
+            }])
+            ->latest('created_at')
             ->take(10)
             ->get();
 
