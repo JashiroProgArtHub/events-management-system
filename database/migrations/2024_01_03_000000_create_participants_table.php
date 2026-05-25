@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('contact_number');
             $table->timestamps();
+            $table->softDeletes(); // Soft delete support
 
             // Foreign keys
             $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->dateTime('event_date');
             $table->enum('status', ['upcoming', 'ongoing', 'done'])->default('upcoming');
             $table->timestamps();
+            $table->softDeletes(); // Soft delete support
 
             // Foreign keys
             $table->foreign('admin_id')->references('admin_id')->on('admins')->onDelete('cascade');
